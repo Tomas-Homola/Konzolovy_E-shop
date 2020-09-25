@@ -19,6 +19,29 @@ typedef struct
 	PRODUKT kupene_produkty[50];
 } ZAKAZNIK;
 
+PRODUKT *nacitaj_produkty_zo_suboru(char *filename)
+{
+	PRODUKT *produkty;
+	FILE *subor;
+	int ID;
+	char nazov[20];
+	char vyrobca[20];
+	int pocet_kusov;
+	float cena;
+	int i, pocet_produktov;
+
+	subor = fopen("produkty.txt", "r");
+	if (subor == NULL)
+		return NULL;
+
+	fscanf(subor, "%d", &pocet_produktov);
+
+	produkty = (PRODUKT *)malloc
+
+
+	return produkty;
+}
+
 int main()
 {
 	FILE *subor;
