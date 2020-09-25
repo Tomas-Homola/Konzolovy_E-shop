@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+int pocet_produktov;
+
 typedef struct
 {
 	int ID;
@@ -19,7 +21,7 @@ typedef struct
 	PRODUKT kupene_produkty[50];
 } ZAKAZNIK;
 
-PRODUKT *nacitaj_produkty_zo_suboru(char *filename)
+PRODUKT *produkty_nacitaj_zo_suboru(char *filename)
 {
 	PRODUKT *produkty;
 	FILE *subor;
@@ -28,51 +30,57 @@ PRODUKT *nacitaj_produkty_zo_suboru(char *filename)
 	char vyrobca[20];
 	int pocet_kusov;
 	float cena;
-	int i, pocet_produktov;
+	int i;
 
-	subor = fopen("produkty.txt", "r");
+	subor = fopen(filename, "r");
 	if (subor == NULL)
 		return NULL;
 
 	fscanf(subor, "%d", &pocet_produktov);
 
-	produkty = (PRODUKT *)malloc
+	produkty = (PRODUKT *)malloc(sizeof(PRODUKT) * pocet_produktov);
+	
+	for (i = 0; i < pocet_produktov; i++)
+	{
+	fscanf(subor, "%d %s %s %d %f", &ID, nazov, vyrobca, &pocet_kusov, &cena);
+
+	produkty->ID = ID;
+	strcpy(produkty->nazov, nazov);
+	strcpy(produkty->vyrobca, vyrobca);
+	produkty->pocet_kusov = pocet_kusov;
+	produkty->cena = cena;
+
+	//printf("Produkt ID: %d, nazov: %s, vyrobca: %s, pocet kusov: %d, cena: %.2f\n", produkty->ID, produkty->nazov, produkty->vyrobca, produkty->pocet_kusov, produkty->cena);
+	
+	produkty++;
+	}
+	
+	produkty = produkty - 10;
 
 
 	return produkty;
 }
 
+void produkty_vypis(PRODUKT *produkty)
+{
+	int i;
+	
+	for (i = 0; i < pocet_produktov; i++)
+	{
+		printf("Produkt ID: %d, nazov: %s, vyrobca: %s, pocet kusov: %d, cena: %.2f\n", produkty->ID, produkty->nazov, produkty->vyrobca, produkty->pocet_kusov, produkty->cena);
+		
+		produkty++;
+	}
+}
+
 int main()
 {
 	FILE *subor;
-	PRODUKT produkt[10];
-	int ID;
-	char nazov[20];
-	char vyrobca[20];
-	int pocet_kusov;
-	float cena;
-	int i, pocet_produktov;
+	PRODUKT *produkty;
+	
+	produkty = produkty_nacitaj_zo_suboru("produkty.txt");
 
-	subor = fopen("produkty.txt", "r");
-	if (subor == NULL)
-		printf("zle otvoreny subor\n");
-
-	fscanf(subor, "%d", &pocet_produktov);
-
-	for (i = 0; i < pocet_produktov; i++)
-	{
-	fscanf(subor, "%d %s %s %d %f", &ID, nazov, vyrobca, &pocet_kusov, &cena);
-
-	produkt[i].ID = ID;
-	strcpy(produkt[i].nazov, nazov);
-	strcpy(produkt[i].vyrobca, vyrobca);
-	produkt[i].pocet_kusov = pocet_kusov;
-	produkt[i].cena = cena;
-
-	printf("Produkt ID: %d, nazov: %s, vyrobca: %s, pocet kusov: %d, cena: %.2f\n", produkt[i].ID, produkt[i].nazov, produkt[i].vyrobca,
-	produkt[i].pocet_kusov, produkt[i].cena);
-	}
-
+	produkty_vypis(produkty);
 
 
 
