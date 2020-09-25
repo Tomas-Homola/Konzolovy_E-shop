@@ -1,0 +1,11 @@
+10
+1 pero SIGNETTA 20 0.75
+2 ceruzka STABILO 15 1.59
+3 guma MAPED 10 0.89
+4 lepidlo PRITT 9 2.33
+5 plastelina CENTROPEN 10 1.03
+6 peracnik PENN 5 10.40
+7 ruksak SPINER 5 32.59
+8 kruzidlo MAPED 11 3.79
+9 struhadlo CONCORDE 6 0.68
+10 bielidlo PRITT 7 2.49
