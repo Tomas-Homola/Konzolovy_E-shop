@@ -1,4 +1,4 @@
-10
+12
 1 pero SIGNETTA 20 0.75
 2 ceruzka STABILO 15 1.59
 3 guma MAPED 10 0.89
@@ -9,3 +9,5 @@
 8 kruzidlo MAPED 11 3.79
 9 struhadlo CONCORDE 6 0.68
 10 bielidlo PRITT 7 2.49
+11 vykresyA4_10ks DAFFER 10 0.49
+12 kriedy DAFFER 9 9.19
