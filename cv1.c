@@ -120,6 +120,8 @@ void produkt_vyber_podla_ID(int vybrane_ID)
 			pocet_kupenych_produktov++; // index pre pole kupenych produktov
 			minute_peniaze += produkty->cena; // celkova minuta suma penazi
 			produkty->pocet_kusov--;
+
+			printf("Zostavajuci rozpocet: %.2f EUR\n", zakaznik->rozpocet);
 			
 			if (produkty->pocet_kusov < 0) // kontrola, aby nebol zaporny pocet kusov
 				produkty->pocet_kusov = 0;
@@ -259,7 +261,7 @@ int main()
 
 	main_page();
 
-	blok = fopen("kupene_produkty.txt", "w");
+	blok = fopen("kupene_produkty.txt", "w"); // vytvorenie "blociku" od nakupu, este sa pohrat s jeho formatom
 	for (i = 0; i < pocet_kupenych_produktov; i++)
 	{
 		fprintf(blok, "%s %s\n", zakaznik->kupene_produkty[i].nazov, zakaznik->kupene_produkty[i].vyrobca);
