@@ -111,6 +111,8 @@ void produkt_vyber_podla_ID(int vybrane_ID)
 		
 		if (kupit == 1)
 		{
+			if (zakaznik->rozpocet > produkty->cena)
+			{
 			puts("Kupene");
 			zakaznik->rozpocet -= produkty->cena;
 			strcpy(zakaznik->kupene_produkty[pocet_kupenych_produktov].nazov, produkty->nazov); // zapisanie nazvu
@@ -121,6 +123,9 @@ void produkt_vyber_podla_ID(int vybrane_ID)
 			
 			if (produkty->pocet_kusov < 0) // kontrola, aby nebol zaporny pocet kusov
 				produkty->pocet_kusov = 0;
+			}
+			else
+				puts("Nedostatok penazi");
 		}
 		else if (kupit == 0)
 			puts("Nekupene");
@@ -229,12 +234,13 @@ void main_page()
 		
 		produkty_vypis_podla_vyrobcu(hladany_vyraz);
 	}
-	else if (volba == 3 || zakaznik->rozpocet < 0)
+	else if (volba == 3)
 	{
-		printf("\nKoniec nakupu, kupene produkty:\n");
+		//printf("\nKoniec nakupu, kupene produkty:\n");
 		
-		for (i = 0; i < pocet_kupenych_produktov; i++)
-			printf("%s od %s\n", zakaznik->kupene_produkty[i].nazov, zakaznik->kupene_produkty[i].vyrobca);
+		printf("\nKoniec nakupu");
+		//for (i = 0; i < pocet_kupenych_produktov; i++)
+		//	printf("%s od %s\n", zakaznik->kupene_produkty[i].nazov, zakaznik->kupene_produkty[i].vyrobca);
 			
 		printf("Minute love: %.2f EUR\n", minute_peniaze);
 	}
