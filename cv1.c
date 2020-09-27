@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-int pocet_produktov;
+int pocet_produktov; // celkovy pocet produktov
 
 typedef struct
 {
@@ -13,7 +13,7 @@ typedef struct
 	float cena;
 } PRODUKT;
 
-PRODUKT *produkty;
+PRODUKT *produkty; // smernik, ktory bude ukazovat na miesto, kde budu jednotlive produkty ulozene
 
 typedef struct
 {
@@ -70,7 +70,7 @@ ZAKAZNIK *registruj_zakaznika()
 	char priezvisko[20];
 	float rozpocet;
 	
-	zakaznik = malloc(sizeof(ZAKAZNIK));
+	zakaznik = (ZAKAZNIK *)malloc(sizeof(ZAKAZNIK));
 	
 	printf("Zadaj meno zakaznika:\n");
 	scanf("%s", meno);
@@ -92,15 +92,24 @@ void produkty_vypis_podla_nazvu(char *hladany_vyraz)
 {
 	int i;
 	
+	printf("Vysledky pre hladany vyraz '%s':\n", hladany_vyraz);
+
 	for (i = 0; i < pocet_produktov; i++)
 	{
-		printf("Produkt ID: %d, nazov: %s, pocet kusov: %d, cena: %.2f EUR\n\n", produkty->ID, produkty->nazov, produkty->pocet_kusov, produkty->cena);
-		
-		produkty++;
+		if (strstr(produkty->nazov, strlwr(hladany_vyraz)) != NULL)
+		{
+			printf("Nazov produktu: %s, ID: %d\n", produkty->nazov, produkty->ID);
+			produkty++;
+		}
+		else
+			produkty++;
 	}
 	
-	produkty -= pocet_produktov;
+	produkty -= pocet_produktov; // vratenie smernika na zaciatok allokovanej pamati
 	
+	//printf()
+
+	printf("\n");
 	main_page();
 }
 
@@ -108,16 +117,29 @@ void produkty_vypis_podla_vyrobcu(char *hladany_vyraz)
 {
 	int i;
 
+	printf("Vysledky pre hladanie podla vyrobcu '%s':\n", hladany_vyraz);
+	
 	for (i = 0; i < pocet_produktov; i++)
 	{
-		printf("Produkt ID: %d, vyrobca: %s, pocet kusov: %d, cena: %.2f EUR\n\n", produkty->ID, produkty->vyrobca, produkty->pocet_kusov, produkty->cena);
-
-		produkty++;
+		if (strstr(produkty->vyrobca, strupr(hladany_vyraz)) != NULL)
+		{
+			printf("Nazov produktu: %s, ID: %d\n", produkty->nazov, produkty->ID);
+			produkty++;
+		}
+		else
+			produkty++;
 	}
-	
-	produkty -= pocet_produktov;
-	
+
+	produkty -= pocet_produktov; // vratenie smernika na zaciatok allokovanej pamati
+
+
+	printf("\n");
 	main_page();
+}
+
+void produkt_vyber_podla_ID()
+{
+	
 }
 
 void main_page()
@@ -129,21 +151,25 @@ void main_page()
 	{
 		printf("Vyberte moznost:\n1 -> pre hladanie podla nazvu produktu\n2 -> hladanie podla vyrobcu\n3 -> pre ukoncenie nakupu\n");
 		scanf("%d", &volba);
-		if (volba > 3)
+		if (volba > 3 || volba < 1)
 			printf("Zle zadana moznost\n");
 			
-	} while (volba > 3);
+	} while (volba > 3 || volba < 1);
 	
 	if (volba == 1)
-		puts("Hladat:")
+	{
+		puts("Hladat podla:");
 		scanf("%s", hladany_vyraz);
 		
 		produkty_vypis_podla_nazvu(hladany_vyraz);
+	}
 	else if (volba == 2)
-		puts("Hladat:")
+	{
+		puts("Hladat podla:");
 		scanf("%s", hladany_vyraz);
 
 		produkty_vypis_podla_vyrobcu(hladany_vyraz);
+	}
 	else if (volba == 3)
 		puts("koniec nakupu");
 }
