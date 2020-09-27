@@ -117,6 +117,7 @@ void produkt_vyber_podla_ID(int vybrane_ID)
 			zakaznik->rozpocet -= produkty->cena;
 			strcpy(zakaznik->kupene_produkty[pocet_kupenych_produktov].nazov, produkty->nazov); // zapisanie nazvu
 			strcpy(zakaznik->kupene_produkty[pocet_kupenych_produktov].vyrobca, produkty->vyrobca); // zapisanie vyrobcu
+			zakaznik->kupene_produkty[pocet_kupenych_produktov].cena = produkty->cena;
 			pocet_kupenych_produktov++; // index pre pole kupenych produktov
 			minute_peniaze += produkty->cena; // celkova minuta suma penazi
 			produkty->pocet_kusov--;
@@ -131,6 +132,8 @@ void produkt_vyber_podla_ID(int vybrane_ID)
 		}
 		else if (kupit == 0)
 			puts("Nekupene");
+		else
+			puts("Zle zadana volba");
 	}
 	
 	produkty -= vybrane_ID - 1; // vratenie sa na zaciatok pola produktov
@@ -161,9 +164,16 @@ void produkty_vypis_podla_nazvu(char *hladany_vyraz)
 	if (najdene_produkty > 0)
 	{
 		printf("\nVyberte si produkt podla jeho ID\n");
-		scanf("%d", &vybrane_ID); // tu este pridat podmienku, aby sa dalo vybrat len ID produktov, ktore sa nasli?
-		
-		produkt_vyber_podla_ID(vybrane_ID);
+		scanf("%d", &vybrane_ID);
+
+		if (vybrane_ID > 0 && vybrane_ID <= pocet_produktov)
+			produkt_vyber_podla_ID(vybrane_ID);
+		else
+		{
+			puts("Zle zadane ID produktu");
+			printf("\n");
+	    	main_page();
+		}
 	}
 	else
 	{
@@ -198,7 +208,14 @@ void produkty_vypis_podla_vyrobcu(char *hladany_vyraz)
 		printf("\nVyberte si produkt podla jeho ID\n");
 		scanf("%d", &vybrane_ID); // tu este pridat podmienku, aby sa dalo vybrat len ID produktov, ktore sa nasli?
 
-		produkt_vyber_podla_ID(vybrane_ID);
+		if (vybrane_ID > 0 && vybrane_ID <= pocet_produktov)
+			produkt_vyber_podla_ID(vybrane_ID);
+		else
+		{
+			puts("Zle zadane ID produktu");
+			printf("\n");
+	    	main_page();
+		}
 	}
 	else
 	{
@@ -240,17 +257,17 @@ void main_page()
 	{
 		//printf("\nKoniec nakupu, kupene produkty:\n");
 		
-		printf("\nKoniec nakupu");
+		printf("\nKoniec nakupu\n");
 		//for (i = 0; i < pocet_kupenych_produktov; i++)
 		//	printf("%s od %s\n", zakaznik->kupene_produkty[i].nazov, zakaznik->kupene_produkty[i].vyrobca);
 			
-		printf("Minute love: %.2f EUR\n", minute_peniaze);
+		printf("Minute peniaze: %.2f EUR\n", minute_peniaze);
 	}
 }
 
 int main()
 {
-	FILE *blok;
+	FILE *blocik;
 	int i;
 	
 	produkty = produkty_nacitaj_zo_suboru("produkty.txt");
@@ -261,13 +278,20 @@ int main()
 
 	main_page();
 
-	blok = fopen("kupene_produkty.txt", "w"); // vytvorenie "blociku" od nakupu, este sa pohrat s jeho formatom
+	blocik = fopen("blocik_od_nakupu.txt", "w"); // vytvorenie "blociku" od nakupu, este sa pohrat s jeho formatom
+	fprintf(blocik, "E-shop Obchodik\nUlica, Mesto, Krajina\nDatum a cas nakupu: bla bla bla\n");
+	fprintf(blocik, "******************************\n");
+	fprintf(blocik, "Zakaznik si zakupil nasledujuce polozky:\n");
+
 	for (i = 0; i < pocet_kupenych_produktov; i++)
 	{
-		fprintf(blok, "%s %s\n", zakaznik->kupene_produkty[i].nazov, zakaznik->kupene_produkty[i].vyrobca);
+		fprintf(blocik, "1x%s od %s ..... %.2f EUR\n", zakaznik->kupene_produkty[i].nazov, zakaznik->kupene_produkty[i].vyrobca, zakaznik->kupene_produkty[i].cena);
 	}
 	
-	fclose(blok);
+	fprintf(blocik, "______________________________\n");
+	fprintf(blocik, "Suma celkovo: %.2f EUR\n\nDakujeme za Vas nakup", minute_peniaze);
+	
+	fclose(blocik);
 	
 	return 0;
 }
