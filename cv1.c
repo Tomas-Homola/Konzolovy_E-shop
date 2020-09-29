@@ -262,6 +262,8 @@ void main_page()
 		//	printf("%s od %s\n", zakaznik->kupene_produkty[i].nazov, zakaznik->kupene_produkty[i].vyrobca);
 			
 		printf("Minute peniaze: %.2f EUR\n", minute_peniaze);
+		free(produkty);
+		free(zakaznik);
 	}
 }
 
@@ -279,7 +281,7 @@ int main()
 	main_page();
 
 	blocik = fopen("blocik_od_nakupu.txt", "w"); // vytvorenie "blociku" od nakupu, este sa pohrat s jeho formatom
-	fprintf(blocik, "E-shop Obchodik\nUlica, Mesto, Krajina\nDatum a cas nakupu: bla bla bla\n");
+	fprintf(blocik, "E-shop Obchodik\nUlica, Mesto, Krajina\nDatum a cas nakupu: 29/09/20 16:14\n");
 	fprintf(blocik, "******************************\n");
 	fprintf(blocik, "Zakaznik si zakupil nasledujuce polozky:\n");
 
