@@ -91,6 +91,8 @@ ZAKAZNIK *registruj_zakaznika()
 	return zakaznik;
 }
 
+void main_page();
+
 void produkt_vyber_podla_ID(int vybrane_ID)
 {
 	int kupit;
@@ -281,7 +283,7 @@ int main()
 	main_page();
 
 	blocik = fopen("blocik_od_nakupu.txt", "w"); // vytvorenie "blociku" od nakupu, este sa pohrat s jeho formatom
-	fprintf(blocik, "E-shop Obchodik\nUlica, Mesto, Krajina\nDatum a cas nakupu: 29/09/20 16:14\n");
+	fprintf(blocik, "E-shop Obchodik\nUlica, Mesto, Krajina\nDatum a cas nakupu: 30/09/20 11:58\n");
 	fprintf(blocik, "******************************\n");
 	fprintf(blocik, "Zakaznik si zakupil nasledujuce polozky:\n");
 
