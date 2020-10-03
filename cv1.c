@@ -26,15 +26,10 @@ typedef struct
 
 ZAKAZNIK *zakaznik;
 
-PRODUKT *produkty_nacitaj_zo_suboru(char *filename)
+PRODUKT *produkty_nacitaj_zo_suboru(char *filename) // osetrene
 {
 	PRODUKT *produkty;
 	FILE *subor;
-	int ID;
-	char nazov[20];
-	char vyrobca[20];
-	int pocet_kusov;
-	float cena;
 	int i;
 
 	subor = fopen(filename, "r"); // kontrola otvorenia suboru
@@ -47,87 +42,67 @@ PRODUKT *produkty_nacitaj_zo_suboru(char *filename)
 	
 	for (i = 0; i < pocet_produktov; i++)
 	{
-	fscanf(subor, "%d %s %s %d %f", &ID, nazov, vyrobca, &pocet_kusov, &cena);
-
-	produkty->ID = ID;
-	strcpy(produkty->nazov, nazov);
-	strcpy(produkty->vyrobca, vyrobca);
-	produkty->pocet_kusov = pocet_kusov;
-	produkty->cena = cena;
-
-	//printf("Produkt ID: %d, nazov: %s, vyrobca: %s, pocet kusov: %d, cena: %.2f\n", produkty->ID, produkty->nazov, produkty->vyrobca, produkty->pocet_kusov, produkty->cena);
-	
-	produkty++;
+	fscanf(subor, "%d %s %s %d %f", &produkty[i].ID, &produkty[i].nazov, &produkty[i].vyrobca, &produkty[i].pocet_kusov, &produkty[i].cena);
 	}
 	
-	produkty = produkty - pocet_produktov;
-
 	fclose(subor);
 	return produkty;
 }
 
-ZAKAZNIK *registruj_zakaznika()
+ZAKAZNIK *registruj_zakaznika() // osetrene
 {
 	ZAKAZNIK *zakaznik;
-	char meno[20];
-	char priezvisko[20];
-	float rozpocet;
 	
 	zakaznik = (ZAKAZNIK *)malloc(sizeof(ZAKAZNIK));
 	
 	printf("Zadaj meno zakaznika:\n");
-	scanf("%s", meno);
+	scanf("%s", &zakaznik->meno);
 	
 	printf("Zadaj priezvisko zakaznika:\n");
-	scanf("%s", priezvisko);
+	scanf("%s", &zakaznik->priezvisko);
 
 	printf("Zadaj rozpocet zakaznika:\n");
-	scanf("%f", &rozpocet);
-	
-	strcpy(zakaznik->meno, meno);
-	strcpy(zakaznik->priezvisko, priezvisko);
-	zakaznik->rozpocet = rozpocet;
+	scanf("%f", &zakaznik->rozpocet);
 	
 	return zakaznik;
 }
 
 void main_page();
 
-void produkt_vyber_podla_ID(int vybrane_ID)
+void produkt_vyber_podla_ID(int vybrane_ID) // osetrene
 {
 	int kupit;
-	
-	produkty += vybrane_ID - 1; // presun na vybrany produkt
 
-	if (produkty->pocet_kusov < 1) // produkt NIE JE na skladke
+	if (produkty[vybrane_ID - 1].pocet_kusov < 1) // produkt NIE JE na skladke
 	{
-		printf("Vybrany produkt '%s' momentalne nie je na sklade\n", produkty->nazov);
-		produkty -= vybrane_ID - 1;
+		printf("Vybrany produkt '%s' momentalne nie je na sklade\n", produkty[vybrane_ID - 1].nazov);
 		main_page();
 	}
 	else // produkt JE na sklade
 	{
-		printf("Vybrany produkt '%s' je na sklade, cena: %.2f\n", produkty->nazov, produkty->cena);
+		printf("Vybrany produkt '%s' je na sklade, cena: %.2f\n", produkty[vybrane_ID - 1].nazov, produkty[vybrane_ID - 1].cena);
 		printf("\nZadajte:\n1 - kupit vybrany produkt\n0 - nekupit vybrany produkt\n");
 		scanf("%d", &kupit);
 		
 		if (kupit == 1)
 		{
-			if (zakaznik->rozpocet > produkty->cena)
+			if (zakaznik->rozpocet > produkty[vybrane_ID - 1].cena)
 			{
 			puts("Kupene");
-			zakaznik->rozpocet -= produkty->cena;
-			strcpy(zakaznik->kupene_produkty[pocet_kupenych_produktov].nazov, produkty->nazov); // zapisanie nazvu
-			strcpy(zakaznik->kupene_produkty[pocet_kupenych_produktov].vyrobca, produkty->vyrobca); // zapisanie vyrobcu
-			zakaznik->kupene_produkty[pocet_kupenych_produktov].cena = produkty->cena;
+
+			zakaznik->rozpocet -= produkty[vybrane_ID - 1].cena;
+			strcpy(zakaznik->kupene_produkty[pocet_kupenych_produktov].nazov, produkty[vybrane_ID - 1].nazov); // zapisanie nazvu
+			strcpy(zakaznik->kupene_produkty[pocet_kupenych_produktov].vyrobca, produkty[vybrane_ID - 1].vyrobca); // zapisanie vyrobcu
+			zakaznik->kupene_produkty[pocet_kupenych_produktov].cena = produkty[vybrane_ID - 1].cena;
+
 			pocet_kupenych_produktov++; // index pre pole kupenych produktov
-			minute_peniaze += produkty->cena; // celkova minuta suma penazi
-			produkty->pocet_kusov--;
+			minute_peniaze += produkty[vybrane_ID - 1].cena; // celkova minuta suma penazi
+			produkty[vybrane_ID - 1].pocet_kusov--;
 
 			printf("Zostavajuci rozpocet: %.2f EUR\n", zakaznik->rozpocet);
 			
-			if (produkty->pocet_kusov < 0) // kontrola, aby nebol zaporny pocet kusov
-				produkty->pocet_kusov = 0;
+			if (produkty[vybrane_ID - 1].pocet_kusov < 0) // kontrola, aby nebol zaporny pocet kusov
+				produkty[vybrane_ID - 1].pocet_kusov = 0;
 			}
 			else
 				puts("Nedostatok penazi");
@@ -138,12 +113,11 @@ void produkt_vyber_podla_ID(int vybrane_ID)
 			puts("Zle zadana volba");
 	}
 	
-	produkty -= vybrane_ID - 1; // vratenie sa na zaciatok pola produktov
 	printf("\n");
 	main_page();
 }
 
-void produkty_vypis_podla_nazvu(char *hladany_vyraz)
+void produkty_vypis_podla_nazvu(char *hladany_vyraz) // osetrene
 {
 	int i, najdene_produkty = 0, vybrane_ID;
 	
@@ -151,17 +125,12 @@ void produkty_vypis_podla_nazvu(char *hladany_vyraz)
 
 	for (i = 0; i < pocet_produktov; i++)
 	{
-		if (strstr(produkty->nazov, strlwr(hladany_vyraz)) != NULL)
+		if (strstr(produkty[i].nazov, strlwr(hladany_vyraz)) != NULL)
 		{
-			printf("Vyrobca: %s, Nazov produktu: %s, ID: %d\n", produkty->vyrobca, produkty->nazov, produkty->ID);
-			produkty++;
+			printf("Vyrobca: %s, Nazov produktu: %s, ID: %d\n", produkty[i].vyrobca, produkty[i].nazov, produkty[i].ID);
 			najdene_produkty++;
 		}
-		else
-			produkty++;
 	}
-	
-	produkty -= pocet_produktov; // vratenie smernika na zaciatok allokovanej pamati
 	
 	if (najdene_produkty > 0)
 	{
@@ -185,7 +154,7 @@ void produkty_vypis_podla_nazvu(char *hladany_vyraz)
 	}
 }
 
-void produkty_vypis_podla_vyrobcu(char *hladany_vyraz)
+void produkty_vypis_podla_vyrobcu(char *hladany_vyraz) // osetrene
 {
 	int i, najdene_produkty = 0, vybrane_ID;
 
@@ -193,22 +162,17 @@ void produkty_vypis_podla_vyrobcu(char *hladany_vyraz)
 	
 	for (i = 0; i < pocet_produktov; i++)
 	{
-		if (strstr(produkty->vyrobca, strupr(hladany_vyraz)) != NULL)
+		if (strstr(produkty[i].vyrobca, strupr(hladany_vyraz)) != NULL)
 		{
-			printf("Vyrobca: %s, Nazov produktu: %s, ID: %d\n", produkty->vyrobca, produkty->nazov, produkty->ID);
-			produkty++;
+			printf("Vyrobca: %s, Nazov produktu: %s, ID: %d\n", produkty[i].vyrobca, produkty[i].nazov, produkty[i].ID);
 			najdene_produkty++;
 		}
-		else
-			produkty++;
 	}
-
-	produkty -= pocet_produktov; // vratenie smernika na zaciatok allokovanej pamati
 	
 	if (najdene_produkty > 0)
 	{
 		printf("\nVyberte si produkt podla jeho ID\n");
-		scanf("%d", &vybrane_ID); // tu este pridat podmienku, aby sa dalo vybrat len ID produktov, ktore sa nasli?
+		scanf("%d", &vybrane_ID);
 
 		if (vybrane_ID > 0 && vybrane_ID <= pocet_produktov)
 			produkt_vyber_podla_ID(vybrane_ID);
@@ -257,13 +221,10 @@ void main_page()
 	}
 	else if (volba == 3)
 	{
-		//printf("\nKoniec nakupu, kupene produkty:\n");
-		
 		printf("\nKoniec nakupu\n");
-		//for (i = 0; i < pocet_kupenych_produktov; i++)
-		//	printf("%s od %s\n", zakaznik->kupene_produkty[i].nazov, zakaznik->kupene_produkty[i].vyrobca);
 			
 		printf("Minute peniaze: %.2f EUR\n", minute_peniaze);
+
 		free(produkty);
 		free(zakaznik);
 	}
@@ -275,6 +236,11 @@ int main()
 	int i;
 	
 	produkty = produkty_nacitaj_zo_suboru("produkty.txt");
+	
+	for (i = 0; i < pocet_produktov; i++)
+	{
+		printf("Produkt ID: %d, nazov: %s, vyrobca: %s, pocet kusov: %d, cena: %.2f\n", produkty[i].ID, produkty[i].nazov, produkty[i].vyrobca, produkty[i].pocet_kusov, produkty[i].cena);
+	}
 	
 	zakaznik = registruj_zakaznika();
 	
