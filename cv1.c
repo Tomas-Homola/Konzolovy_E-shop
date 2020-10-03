@@ -193,6 +193,7 @@ void produkty_vypis_podla_vyrobcu(char *hladany_vyraz) // osetrene
 
 void main_page()
 {
+	FILE *blocik;
 	int volba = 0, i;
 	char hladany_vyraz[20] = {};
 	
@@ -224,44 +225,41 @@ void main_page()
 		printf("\nKoniec nakupu\n");
 			
 		printf("Minute peniaze: %.2f EUR\n", minute_peniaze);
+		
+		blocik = fopen("blocik_od_nakupu.txt", "w"); // vytvorenie "blociku" od nakupu, este sa pohrat s jeho formatom
+
+		fprintf(blocik, "E-shop Obchodik\nUlica, Mesto, Krajina\nDatum a cas nakupu: 30/09/20 11:58\n");
+		fprintf(blocik, "******************************\n");
+		fprintf(blocik, "Zakaznik si zakupil nasledujuce polozky:\n");
+
+		for (i = 0; i < pocet_kupenych_produktov; i++)
+		{
+			fprintf(blocik, "1x%s od %s ..... %.2f EUR\n", zakaznik->kupene_produkty[i].nazov, zakaznik->kupene_produkty[i].vyrobca, zakaznik->kupene_produkty[i].cena);
+		}
+
+		fprintf(blocik, "______________________________\n");
+		fprintf(blocik, "Suma celkovo: %.2f EUR\n\nDakujeme za Vas nakup", minute_peniaze);
+
+		fclose(blocik);
 
 		free(produkty);
 		free(zakaznik);
+		
+		exit(0);
 	}
 }
 
 int main()
 {
-	FILE *blocik;
 	int i;
 	
 	produkty = produkty_nacitaj_zo_suboru("produkty.txt");
-	
-	for (i = 0; i < pocet_produktov; i++)
-	{
-		printf("Produkt ID: %d, nazov: %s, vyrobca: %s, pocet kusov: %d, cena: %.2f\n", produkty[i].ID, produkty[i].nazov, produkty[i].vyrobca, produkty[i].pocet_kusov, produkty[i].cena);
-	}
 	
 	zakaznik = registruj_zakaznika();
 	
 	printf("\nZakaznik:\n-meno: %s\n-priezvisko: %s\n-rozpocet: %.2f EUR\n", zakaznik->meno, zakaznik->priezvisko, zakaznik->rozpocet);
 
 	main_page();
-
-	blocik = fopen("blocik_od_nakupu.txt", "w"); // vytvorenie "blociku" od nakupu, este sa pohrat s jeho formatom
-	fprintf(blocik, "E-shop Obchodik\nUlica, Mesto, Krajina\nDatum a cas nakupu: 30/09/20 11:58\n");
-	fprintf(blocik, "******************************\n");
-	fprintf(blocik, "Zakaznik si zakupil nasledujuce polozky:\n");
-
-	for (i = 0; i < pocet_kupenych_produktov; i++)
-	{
-		fprintf(blocik, "1x%s od %s ..... %.2f EUR\n", zakaznik->kupene_produkty[i].nazov, zakaznik->kupene_produkty[i].vyrobca, zakaznik->kupene_produkty[i].cena);
-	}
-	
-	fprintf(blocik, "______________________________\n");
-	fprintf(blocik, "Suma celkovo: %.2f EUR\n\nDakujeme za Vas nakup", minute_peniaze);
-	
-	fclose(blocik);
 	
 	return 0;
 }
